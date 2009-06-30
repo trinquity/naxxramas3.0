@@ -1,0 +1,40 @@
+diff --git a/src/game/SpellAuras.cpp b/src/game/SpellAuras.cpp
+index 442da50..cc2c5c6 100644
+--- a/src/game/SpellAuras.cpp
++++ b/src/game/SpellAuras.cpp
+@@ -2071,6 +2071,35 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
+                     }
+                 }
+                 return;
++            // The four horseman's mark
++            case 28835:
++            case 28834:
++            case 28833:
++            case 28832:
++            {
++                if(!m_target)
++                    return;
++
++                if(Aura* spellAura = m_target->GetAura(m_spellProto->Id))
++                {
++                    uint32 stackAmount = spellAura->GetStackAmount();
++                    uint32 dmg = 0;
++                    switch(stackAmount)
++                    {
++                        case 0: return;
++                        case 1: dmg = 500 break;
++                        case 2: dmg = 1500; break;
++                        case 3: dmg = 4000; break;
++                        case 4: dmg = 12500; break;
++                        case 5: dmg = 20000; break;
++                        default: dmg = int32(20000 + (1000 * (stackAmount -5)); break;
++                    }
++
++                    if(dmg)
++                        m_target->DealDamage(m_target, &dmg, NULL, DOT, SPELL_SCHOOL_MASK_SHADOW, m_spellProto, true);
++                }
++                return;
++            }               
+             case 46699:                                     // Requires No Ammo
+                 if(m_target->GetTypeId() == TYPEID_PLAYER)
+                     ((Player*)m_target)->RemoveAmmo();      // not use ammo and not allow use
