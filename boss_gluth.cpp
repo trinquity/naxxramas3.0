@@ -159,9 +159,8 @@ struct MANGOS_DLL_DECL mob_zombie_chowAI : public ScriptedAI
 	{
 		if(spell->Id != SPELL_DECIMATE)
 			return;
-		debug_log("hited by decimate");
 		gluth = caster;
-		//m_creature->ModifyHealth(m_creature->GetMaxHealth()*5/100);
+
 		m_creature->GetMotionMaster()->MovementExpired();
 		m_creature->GetMotionMaster()->MovePoint(0,caster->GetPositionX(),caster->GetPositionY(),caster->GetPositionZ());
 	}
