@@ -53,6 +53,7 @@
 #define GO_CONS_PATH_EXIT_DOOR 181123
 #define GO_CONS_GLUT_EXIT_DOOR 181120 //encounterdoor(?)
 #define GO_CONS_THAD_DOOR 181121
+#define GO_FROSTWYRM_WATERFALL_DOOR 181225 //shappiron door
 //npc's
 #define NPC_ZELIEK 16063
 #define NPC_THANE 16064
