@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Boss_Thaddius
 SD%Complete: 90
-SDComment: Placeholder. Includes Feugen & Stalagg.
+SDComment: Placeholder.Need Some Corepatch
 SDCategory: Naxxramas
 EndScriptData */
 
@@ -85,6 +85,7 @@ struct MANGOS_DLL_DECL boss_thaddiusAI : public Scripted_NoMovementAI
 	bool FeugenAndStalaggKilled;
 	void Reset()
 	{
+		m_pInstance->SetData(DATA_THADDIUS_EVENT,NOT_STARTED);
 		Stalagg = (Creature *)Unit::GetUnit(*m_creature,m_pInstance->GetData64(NPC_STALAGG));
 		Feugen = (Creature *)Unit::GetUnit(*m_creature,m_pInstance->GetData64(NPC_FEUGEN));
 		CheckInRange = 1000;
@@ -104,9 +105,11 @@ struct MANGOS_DLL_DECL boss_thaddiusAI : public Scripted_NoMovementAI
 	}
 	void Aggro(Unit *)
 	{
+		m_pInstance->SetData(DATA_THADDIUS_EVENT,IN_PROGRESS);
 	}
 	void JustDied(Unit* Killer)
 	{
+		m_pInstance->SetData(DATA_THADDIUS_EVENT,DONE);
 	}
 	void UpdateAI(const uint32 diff)
     {
