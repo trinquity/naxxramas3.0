@@ -73,8 +73,13 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
 		Enrage_Timer = 600000;
 		summoned = true;
 		enraged = false;
+		
 		if(m_pInstance)
 		m_pInstance->SetData(DATA_ANUBREKHAN_EVENT,NOT_STARTED);
+		if(GameObject* pDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_ARAC_ANUB_GATE)))
+			pDoor->SetGoState(GO_STATE_READY);
+		if(GameObject* pDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_ARAC_ANUB_DOOR)))
+			pDoor->SetGoState(GO_STATE_ACTIVE);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -89,12 +94,20 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
 	{
 		if(m_pInstance)
 		m_pInstance->SetData(DATA_ANUBREKHAN_EVENT,DONE);
+		if(GameObject* pDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_ARAC_ANUB_GATE)))
+			pDoor->SetGoState(GO_STATE_ACTIVE);
+		if(GameObject* pDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_ARAC_ANUB_DOOR)))
+			pDoor->SetGoState(GO_STATE_ACTIVE);
 	}
 
     void Aggro(Unit *who)
     {
 		if(m_pInstance)
 		m_pInstance->SetData(DATA_ANUBREKHAN_EVENT,IN_PROGRESS);
+		if(GameObject* pDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_ARAC_ANUB_GATE)))
+			pDoor->SetGoState(GO_STATE_READY);
+		if(GameObject* pDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_ARAC_ANUB_DOOR)))
+			pDoor->SetGoState(GO_STATE_READY);
         switch(rand()%3)
         {
             case 0: DoScriptText(SAY_AGGRO1, m_creature); break;

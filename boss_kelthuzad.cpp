@@ -22,6 +22,7 @@ SDCategory: Naxxramas
 EndScriptData */
 
 #include "precompiled.h"
+#include "def_naxxramas.h"
 
 //when shappiron dies. dialog between kel and lich king (in this order)
 #define SAY_SAPP_DIALOG1            -1533084
@@ -61,7 +62,7 @@ EndScriptData */
 #define SAY_SPECIAL3_MANA_DET       -1533107
 #define SAY_SPECIAL2_DISPELL        -1533108
 
-#define NPC_SOLDIER 16472
+#define NPC_SOLDIER 16427
 #define NPC_ABOMINATION 16428
 #define NPC_WEAVER 16429
 
@@ -86,13 +87,13 @@ SpawnLoc Center[] =
 };
 SpawnLoc AddSpawnLoc[] =
 {
-	{3783.272705,-5062.697266,143.183884},
-	{3730.291260,-5027.239258,143.956909},
-	{3683.868652,-5057.281250,143.183884},
-	{3759.355225,-5174.128418,143.802383},
-	//need x corr
-	{3750.724365,-5185.123047,143.928024},
-	{3665.121094,-5138.679199,143.183212}
+	{3744.87,-5149.07,143.17},
+	{3727.09,-5054.34,143.19},
+	{3758.60,-5078.39,143.17},
+	{3705.97,-5157.78,143.17},
+	{3673.85,-5134.24,143.17},
+	{3663.89,-5095.40,143.22},
+	{3688.13,-5064.07,143.17}
 };
 
 
@@ -113,6 +114,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
 {
     boss_kelthuzadAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
+		pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
 		isHeroicMode = pCreature->GetMap()->IsHeroic();
 		SpellEntry *FrostBlast = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_FROST_BLAST);
 		if(FrostBlast)
@@ -120,6 +122,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         Reset();
     }
 	bool isHeroicMode;
+	ScriptedInstance* pInstance;
     uint64 GuardiansOfIcecrown[4];
     uint32 GuardiansOfIcecrown_Count;
     uint32 FrostBolt_Timer;
@@ -142,7 +145,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         ShadowFisure_Timer = 25000;                         //25 seconds
         FrostBlast_Timer = (rand()%30+30)*1000;             //Random time between 30-60 seconds
 		GuardiansOfIcecrown_Count = isHeroicMode ? 4 : 2;
-
+		SetCombatMovement(false);
         for(int i=0; i<GuardiansOfIcecrown_Count; i++)
         {
             if (GuardiansOfIcecrown[i])
@@ -161,6 +164,9 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
 			Phase1SummTimer[i] = AddTimers[i].time;
 
 		phase = 1;
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_KELTHUZAD_DOOR)))
+			pDoor->SetGoState(GO_STATE_ACTIVE);
+		pInstance->SetData(DATA_KELTHUZAD_EVENT,NOT_STARTED);
     }
 
     void KilledUnit()
@@ -174,6 +180,9 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_DEATH, m_creature);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_KELTHUZAD_DOOR)))
+			pDoor->SetGoState(GO_STATE_ACTIVE);
+		pInstance->SetData(DATA_KELTHUZAD_EVENT,DONE);
     }
 
     void Aggro(Unit* who)
@@ -184,11 +193,25 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             case 1: DoScriptText(SAY_AGGRO2, m_creature); break;
             case 2: DoScriptText(SAY_AGGRO3, m_creature); break;
         }
+		m_creature->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NON_ATTACKABLE);
+		m_creature->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NOT_SELECTABLE);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_KELTHUZAD_DOOR)))
+			pDoor->SetGoState(GO_STATE_READY);
+		 pInstance->SetData(DATA_KELTHUZAD_EVENT,IN_PROGRESS);
     }
 	void JustSummoned(Creature *p)
 	{
+		switch(p->GetEntry())
+		{
+		case NPC_SOLDIER:
+		case NPC_WEAVER:
+		case NPC_ABOMINATION:
 		if(Unit* pTemp = SelectUnit(SELECT_TARGET_RANDOM,0))
 			p->AddThreat(pTemp,0.0f);
+		break;
+		default:
+		break;
+		}
 	}
     void UpdateAI(const uint32 diff)
     {
@@ -196,16 +219,22 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             return;
 		if(phase == 1)
 		{
+			if(m_creature->HasFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE))
+			{
+				m_creature->RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NON_ATTACKABLE);
+				m_creature->RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NOT_SELECTABLE);
+			}
 			if(m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() != IDLE_MOTION_TYPE)
 			{
 				m_creature->GetMotionMaster()->MovementExpired();
 				m_creature->GetMotionMaster()->MoveIdle();
 			}
+
 			for(int i = 0;i<3;i++)
 			{
 				if(Phase1SummTimer[i] < diff)
 				{
-					int j = rand()%6;
+					int j = rand()%7;
 					m_creature->SummonCreature(AddTimers[i].Entry,AddSpawnLoc[j].x,AddSpawnLoc[j].y,AddSpawnLoc[j].z,0,TEMPSUMMON_DEAD_DESPAWN,900000);
 					Phase1SummTimer[i] = AddTimers[i].time;
 				}else Phase1SummTimer[i] -= diff;
@@ -218,6 +247,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
 		{
 			if(m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() == IDLE_MOTION_TYPE)
 			{
+				SetCombatMovement(true);
 				m_creature->GetMotionMaster()->MovementExpired();
 				m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
 			}
@@ -261,7 +291,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
 						continue;
 
                 //has mana
-					if (target && target->GetMaxPower(POWER_MANA) > 0)
+					if (target && target->GetPower(POWER_MANA) > 1 )
 						target_list.push_back(target);
 
                 target = NULL;
@@ -293,7 +323,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             FrostBlast_Timer = (rand()%30+30)*1000;
         }else FrostBlast_Timer -= diff;
 		}
-		if(m_creature->GetHealth()*100 / m_creature->GetMaxHealth() > 45 && phase != 3)
+		if(m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 45 && phase != 3)
 		{
 			phase = 3;
 			for(int i = 0;i<GuardiansOfIcecrown_Count;i++)
@@ -311,12 +341,77 @@ CreatureAI* GetAI_boss_kelthuzadAI(Creature* pCreature)
 {
     return new boss_kelthuzadAI(pCreature);
 }
+#define SPELL_DARK_BLAST 28457 //soldier
+#define H_SPELL_DARK_BLAST 55714 //soldier
+#define SPELL_WAIL_OF_SOULS 28459 // weaver
+#define H_SPELL_WAIL_OF_SOULS 55765 // weaver
+#define SPELL_MORTAL_WOUND 28467 //abomination
 
+struct MANGOS_DLL_DECL mob_kelthuzzad_addAI : public ScriptedAI
+{
+    mob_kelthuzzad_addAI(Creature* pCreature) : ScriptedAI(pCreature)
+	{
+		isHeroic = pCreature->GetMap()->IsHeroic();
+		Reset();
+	}
+	bool isHeroic;
+	uint32 check_timer;
+	uint32 Entry;
+    void Reset()
+	{
+		Entry = m_creature->GetEntry();
+		check_timer = 1000;
+	}
+	void Aggro(Unit* who){}
+	void JustDied(Unit*)
+	{
+		m_creature->RemoveCorpse();
+	}
+	void UpdateAI(const uint32 diff)
+	{
+		 if (!m_creature->SelectHostilTarget() || !m_creature->getVictim())
+            return;
+		if(check_timer < diff)
+		{
+			switch(Entry)
+			{
+			case NPC_SOLDIER:
+			{
+				if(Player* p = GetPlayerAtMinimumRange(5.0f))
+					DoCast(m_creature,isHeroic ? H_SPELL_DARK_BLAST : SPELL_DARK_BLAST);
+			}
+			break;
+			case NPC_WEAVER:
+			{
+				if(m_creature->IsWithinDist(m_creature->getVictim(),10.0f,false))
+					DoCast(m_creature->getVictim(),isHeroic ? H_SPELL_WAIL_OF_SOULS : SPELL_WAIL_OF_SOULS);
+			}
+			break;	
+			case NPC_ABOMINATION:
+			{
+				DoCast(m_creature->getVictim(),SPELL_MORTAL_WOUND);
+			}
+			break;
+			}
+			check_timer = 1500;
+		}else check_timer -= diff;
+	}
+	
+};
+CreatureAI* GetAI_mob_kelthuzzad_add(Creature* pCreature)
+{
+    return new mob_kelthuzzad_addAI(pCreature);
+}
 void AddSC_boss_kelthuzad()
 {
     Script *newscript;
     newscript = new Script;
     newscript->Name = "boss_kelthuzad";
     newscript->GetAI = &GetAI_boss_kelthuzadAI;
+    newscript->RegisterSelf();
+
+	newscript = new Script;
+    newscript->Name = "mob_kelthuzad_add";
+    newscript->GetAI = &GetAI_mob_kelthuzzad_add;
     newscript->RegisterSelf();
 }

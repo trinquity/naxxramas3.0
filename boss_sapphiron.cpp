@@ -22,6 +22,7 @@ SDCategory: Naxxramas
 EndScriptData */
 
 #include "precompiled.h"
+#include "def_naxxramas.h"
 
 #define EMOTE_BREATH            -1533082
 #define EMOTE_ENRAGE            -1533083
@@ -78,10 +79,20 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
         phase = 1;
 		Icebolt_Max_Count = isHeroicMode ? 3 : 2;
 		Icebolt_Count = 0;
+		pInstance->SetData(DATA_SAPPHIRON_EVENT,NOT_STARTED);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_KELTHUZAD_DOOR)))
+			pDoor->SetGoState(GO_STATE_READY);
     }
 	void Aggro(Unit* who)
 	{
 		DoCast(m_creature,isHeroicMode ? H_SPELL_FROST_AURA : SPELL_FROST_AURA);
+		pInstance->SetData(DATA_SAPPHIRON_EVENT,IN_PROGRESS);
+	}
+	void JustDied(Unit *)
+	{
+		pInstance->SetData(DATA_SAPPHIRON_EVENT,DONE);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_KELTHUZAD_DOOR)))
+			pDoor->SetGoState(GO_STATE_ACTIVE);
 	}
 
     void UpdateAI(const uint32 diff)

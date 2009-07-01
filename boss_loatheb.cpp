@@ -133,7 +133,7 @@ struct MANGOS_DLL_DECL mob_sporeAI : public ScriptedAI
     mob_sporeAI(Creature* pCreature) : ScriptedAI(pCreature){Reset();}
     void Reset(){}
 	void Aggro(Unit* who){}
-	void DamageTaken(Unit* done_bye,uint32 &damage)
+	void DamageTaken(Unit* done_by,uint32 &damage)
 	{
 		if(damage < m_creature->GetHealth())
 			return;

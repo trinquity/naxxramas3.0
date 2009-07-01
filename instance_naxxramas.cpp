@@ -59,6 +59,14 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
 	uint64 LoathebDoorGUID;
 	uint64 PatchwerkExitDoorGUID;
 	uint64 GluthExitDoorGUID;
+	uint64 KelthuzadDoorGUID;
+	uint64 SapphironDoorGUID;
+	uint64 AnubGateGUID;
+	uint64 AnubDoorGUID;
+	uint64 FaerlinaWebGUID;
+	uint64 FaerlinaDoor2GUID;
+	uint64 MaexxnaDoorGUID;
+	uint64 MaexxnaEncDoorGUID;
 
     void Initialize()
     {
@@ -89,6 +97,12 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
     {
 		switch(pGo->GetEntry())
 		{
+		case GO_ARAC_ANUB_GATE: AnubGateGUID = pGo->GetGUID();break;
+		case GO_ARAC_ANUB_DOOR: AnubDoorGUID = pGo->GetGUID();break;
+		case GO_ARAC_FAER_WEB: FaerlinaWebGUID = pGo->GetGUID();break;
+		case GO_ARAC_DOOD_DOOR_2: FaerlinaDoor2GUID = pGo->GetGUID();break;
+		case GO_ARAC_MAEX_OUTER_DOOR: MaexxnaDoorGUID = pGo->GetGUID();break;
+		case GO_ARAC_MAEX_INNER_DOOR: MaexxnaEncDoorGUID = pGo->GetGUID();break;
 		case GO_MILI_GOTH_COMBAT_GATE: GothicGateGUID = pGo->GetGUID();break;
 		case GO_MILI_GOTH_EXIT_GATE: GoticEGateGUID = pGo->GetGUID();break;
 		case GO_MILI_GOTH_ENTRY_GATE: GoticIGateGUID = pGo->GetGUID();break;
@@ -100,6 +114,8 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
 		case GO_PLAG_LOAT_DOOR: LoathebDoorGUID = pGo->GetGUID();break;
 		case GO_CONS_PATH_EXIT_DOOR: PatchwerkExitDoorGUID = pGo->GetGUID();break;
 		case GO_CONS_GLUT_EXIT_DOOR: GluthExitDoorGUID = pGo->GetGUID();break;
+		case GO_KELTHUZAD_DOOR: KelthuzadDoorGUID = pGo->GetGUID();break;
+		case GO_FROSTWYRM_WATERFALL_DOOR: SapphironDoorGUID = pGo->GetGUID();break;
 		}
     }
 
@@ -128,7 +144,13 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
 		case NPC_FEUGEN: return FeugenGUID;
 		case NPC_STALAGG: return StalaggGUID;
 		case NPC_THADDIUS: return ThaddiusGUID;
-
+		
+		case GO_ARAC_ANUB_DOOR: return AnubDoorGUID;
+		case GO_ARAC_ANUB_GATE: return AnubGateGUID;
+		case GO_ARAC_FAER_WEB: return FaerlinaWebGUID;
+		case GO_ARAC_DOOD_DOOR_2: return FaerlinaDoor2GUID;
+		case GO_ARAC_MAEX_OUTER_DOOR: return MaexxnaDoorGUID;
+		case GO_ARAC_MAEX_INNER_DOOR: return MaexxnaEncDoorGUID;
 		case GO_MILI_GOTH_COMBAT_GATE: return GothicGateGUID;
 		case GO_MILI_GOTH_ENTRY_GATE: return GoticIGateGUID;
 		case GO_MILI_GOTH_EXIT_GATE: return GoticEGateGUID;
@@ -141,6 +163,8 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
 		case GO_PLAG_LOAT_DOOR:return LoathebDoorGUID;
 		case GO_CONS_PATH_EXIT_DOOR: return PatchwerkExitDoorGUID;
 		case GO_CONS_GLUT_EXIT_DOOR: return GluthExitDoorGUID;
+		case GO_KELTHUZAD_DOOR: return KelthuzadDoorGUID;
+		case GO_FROSTWYRM_WATERFALL_DOOR: return SapphironDoorGUID;
 		}
         return 0;
     }

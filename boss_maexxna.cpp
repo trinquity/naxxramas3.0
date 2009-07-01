@@ -86,6 +86,10 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
 		found = false;
 		if(pInstance)
 			pInstance->SetData(DATA_MAEXXNA_EVENT,NOT_STARTED);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_MAEX_OUTER_DOOR)))
+			pDoor->SetGoState(GO_STATE_READY);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_MAEX_INNER_DOOR)))
+			pDoor->SetGoState(GO_STATE_ACTIVE);
 		for(int i = 0;i<NUM_OF_WRAP_POS;i++)
 			PlayersInWrap[i] = 0;
     }
@@ -94,11 +98,19 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
 	{
 		if(pInstance)
 			pInstance->SetData(DATA_MAEXXNA_EVENT,IN_PROGRESS);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_MAEX_OUTER_DOOR)))
+			pDoor->SetGoState(GO_STATE_READY);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_MAEX_INNER_DOOR)))
+			pDoor->SetGoState(GO_STATE_ACTIVE);
 	}
 	void JustDied(Unit *)
 	{
 		if(pInstance)
 			pInstance->SetData(DATA_MAEXXNA_EVENT,DONE);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_MAEX_OUTER_DOOR)))
+			pDoor->SetGoState(GO_STATE_ACTIVE);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_MAEX_INNER_DOOR)))
+			pDoor->SetGoState(GO_STATE_ACTIVE);
 	}
     void DoCastWebWrap()
     {	found = false;

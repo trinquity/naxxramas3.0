@@ -1,5 +1,22 @@
+PlaceHolder files:
+boss_heigan.cpp - packetsniff needed
+boss_thaddius.cpp - corepatch needed
+boss_gluth.cpp - corepatch needed for spell decimate then can i write the script
+
+know bugs:
+issue with 4horseman chest
+sapphiron - i doesnt find the iceblock like go(VMAP need for this fight)
+thaddius - positive/negative charge, magnetic pull...
+gothik - adds move cross the walls
+razuvius issue with mc/gameobject mc
+kelthuzad - mana detonate target non-mana users(dont know why)
+maexxna - webwrap ability can't cast (player cast triggered on self but doesnt apply the debuff)
+
+some go, npc(who cast aoe's) , visual and speak not included because iam lazy later...
+
+imho all bosses are blizzlike
+
 this spells needs corepatch:
-KelThuzzad:27808,27819
 4Horseman:28835,28834,28833,28832
 Thaddius: 28338,28089(both positive and negativ charge & triggered effect)
 Gluth:28374

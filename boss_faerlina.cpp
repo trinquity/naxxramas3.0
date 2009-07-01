@@ -73,6 +73,10 @@ struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
         Enrage_Timer = 60000;
         is_enraged = false;
 		pInstance->SetData(DATA_FAERLINA_EVENT,NOT_STARTED);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_DOOD_DOOR_2)))
+			pDoor->SetGoState(GO_STATE_READY);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_FAER_WEB)))
+			pDoor->SetGoState(GO_STATE_ACTIVE);
     }
 
     void Aggro(Unit *who)
@@ -85,6 +89,10 @@ struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
             case 3: DoScriptText(SAY_AGGRO4, m_creature); break;
         }
 		pInstance->SetData(DATA_FAERLINA_EVENT,IN_PROGRESS);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_DOOD_DOOR_2)))
+			pDoor->SetGoState(GO_STATE_READY);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_FAER_WEB)))
+			pDoor->SetGoState(GO_STATE_ACTIVE);
     }
 
     void KilledUnit(Unit* victim)
@@ -99,6 +107,10 @@ struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_DEATH, m_creature);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_DOOD_DOOR_2)))
+			pDoor->SetGoState(GO_STATE_ACTIVE);
+		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_FAER_WEB)))
+			pDoor->SetGoState(GO_STATE_ACTIVE);
 		pInstance->SetData(DATA_FAERLINA_EVENT,DONE);
     }
 

@@ -18,8 +18,8 @@
 #define DATA_GLUTH_EVENT 11
 #define DATA_THADDIUS_EVENT 12
  //forstwyrmlair
-#define DATA_SHAPPIRON_EVENT 13
-#define DATA_KELTHUZZAD_EVENT 14
+#define DATA_SAPPHIRON_EVENT 13
+#define DATA_KELTHUZAD_EVENT 14
 
 #define DATA_GLUTH 15
 #define DATA_THADDIUS 16
@@ -34,7 +34,7 @@
 #define GO_ARAC_ANUB_GATE 181195 //openwhenanubdead?
 #define GO_ARAC_ANUB_DOOR 181126 //encounterdoor
 #define GO_ARAC_FAER_WEB 181235 //encounterdoor
-#define GO_ARAC_DOOD_DOOR_2 181235 //afterfaerlinatoouterring
+#define GO_ARAC_DOOD_DOOR_2 181167 //afterfaerlinatoouterring
 #define GO_ARAC_MAEX_OUTER_DOOR 181209 //rightbeforemaex
 #define GO_ARAC_MAEX_INNER_DOOR 181197 //encounterdoor
 #define GO_PLAG_SLIME01_DOOR 181198
@@ -54,6 +54,8 @@
 #define GO_CONS_GLUT_EXIT_DOOR 181120 //encounterdoor(?)
 #define GO_CONS_THAD_DOOR 181121
 #define GO_FROSTWYRM_WATERFALL_DOOR 181225 //shappiron door
+#define GO_KELTHUZAD_DOOR 181228 //encounter door
+#define GO_KELTHUZAD_TRIGGER 181444 //trigger despawn when kt event started
 //npc's
 #define NPC_ZELIEK 16063
 #define NPC_THANE 16064
