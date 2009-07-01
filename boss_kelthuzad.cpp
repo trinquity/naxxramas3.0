@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: Boss_KelThuzud
-SD%Complete: 0
-SDComment: VERIFY SCRIPT
+SD%Complete: 99
+SDComment: whoo majd ne feleljtsem el a forciklust lecserelni 4mp-nkenti summra a guardiannal
 SDCategory: Naxxramas
 EndScriptData */
 
@@ -206,6 +206,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
 		case NPC_SOLDIER:
 		case NPC_WEAVER:
 		case NPC_ABOMINATION:
+		case NPC_GUARDIAN:
 		if(Unit* pTemp = SelectUnit(SELECT_TARGET_RANDOM,0))
 			p->AddThreat(pTemp,0.0f);
 		break;
