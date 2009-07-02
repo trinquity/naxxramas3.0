@@ -183,7 +183,7 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
 			for(int i = 0;i<num_spiders;i++)
 			{
 				Creature* c = m_creature->SummonCreature(NPC_SPIDERLING,m_creature->GetPositionX(),m_creature->GetPositionX(),m_creature->GetPositionX(),m_creature->GetOrientation(),TEMPSUMMON_DEAD_DESPAWN,60000);
-				Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0);
+				Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1);
 				if(target)
 					c->Attack(target,true);
 			}
