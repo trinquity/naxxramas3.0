@@ -58,7 +58,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     bool m_bIsHeroicMode;
-	bool summoned;
+	bool able_to_summon;
 	bool enraged;
     uint32 Impale_Timer;
     uint32 LocustSwarm_Timer;
@@ -71,7 +71,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         LocustSwarm_Timer = 80000 + (rand()%40000);         //Random time between 80 seconds and 2 minutes for initial cast
 		Summon_Timer = 0;
 		Enrage_Timer = 600000;
-		summoned = true;
+		able_to_summon = false;
 		enraged = false;
 		
 		if(m_pInstance)
@@ -116,6 +116,12 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         }
     }
 
+	void JustSummoned(Creature* c)
+	{
+		Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0);
+		if(target)
+			c->AddThreat(target,0.0f);
+	}
     void UpdateAI(const uint32 diff)
     {
         if (!m_creature->SelectHostilTarget() || !m_creature->getVictim())
@@ -128,7 +134,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
             //Do NOT cast it when we are afflicted by locust swarm
             if (!m_creature->HasAura(SPELL_LOCUSTSWARM) || !m_creature->HasAura(SPELL_LOCUSTSWARM_H))
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
                     DoCast(target, m_bIsHeroicMode ? SPELL_IMPALE_H : SPELL_IMPALE);
             }
 
@@ -140,19 +146,18 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         {
             DoCast(m_creature, m_bIsHeroicMode ? SPELL_LOCUSTSWARM_H : SPELL_LOCUSTSWARM);
 			Summon_Timer = 20000;
-			summoned = false;
+			able_to_summon = true;
             LocustSwarm_Timer = 90000;
         }else LocustSwarm_Timer -= diff;
 		//summon
-		if(Summon_Timer < diff && !summoned)
+		if(able_to_summon)
 		{
-			Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0);
-			if(!target)
-				return;
-			Creature* c = DoSpawnCreature(NPC_CRYPT_GUARD,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),m_creature->GetOrientation(),TEMPSUMMON_DEAD_DESPAWN,600000);
-			c->Attack(target,true);
-			summoned = true;
-		}else Summon_Timer -= diff;
+			if(Summon_Timer < diff)
+			{
+			m_creature->SummonCreature(NPC_CRYPT_GUARD,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),m_creature->GetOrientation(),TEMPSUMMON_DEAD_DESPAWN,600000);
+			able_to_summon = false;
+			}else Summon_Timer -= diff;
+		}
 		//enrage
 		if(Enrage_Timer < diff && !enraged)
 		{
