@@ -130,7 +130,7 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
 		if(!found)
 			return;
 
-        Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0);
+        Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1);
 		if(!target)
 			return;
 		PlayersInWrap[pos] = target->GetGUID();
@@ -183,9 +183,9 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
 			for(int i = 0;i<num_spiders;i++)
 			{
 				Creature* c = m_creature->SummonCreature(NPC_SPIDERLING,m_creature->GetPositionX(),m_creature->GetPositionX(),m_creature->GetPositionX(),m_creature->GetOrientation(),TEMPSUMMON_DEAD_DESPAWN,60000);
-				Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1);
+				Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0);
 				if(target)
-					c->Attack(target,true);
+					c->AddThreat(target,0.0f);
 			}
             SummonSpiderling_Timer = 40000;
         }else SummonSpiderling_Timer -= diff;
