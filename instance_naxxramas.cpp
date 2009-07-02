@@ -89,6 +89,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
 		case NPC_STALAGG: StalaggGUID = pCreature->GetGUID();break;
 		case NPC_THADDIUS: ThaddiusGUID = pCreature->GetGUID();break;
 		case NPC_FAERLINA: FaerlinaGUID = pCreature->GetGUID();break;
+		case NPC_MAEXXNA: MaexxnaGUID = pCreature->GetGUID();break;
 		}
 
     }
@@ -144,6 +145,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
 		case NPC_FEUGEN: return FeugenGUID;
 		case NPC_STALAGG: return StalaggGUID;
 		case NPC_THADDIUS: return ThaddiusGUID;
+		case NPC_MAEXXNA: return MaexxnaGUID;
 		
 		case GO_ARAC_ANUB_DOOR: return AnubDoorGUID;
 		case GO_ARAC_ANUB_GATE: return AnubGateGUID;

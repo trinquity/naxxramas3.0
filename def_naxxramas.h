@@ -69,7 +69,7 @@
 #define NPC_THADDIUS 15928
 #define NPC_STALAGG 15929
 #define NPC_FEUGEN 15930
-
+#define NPC_MAEXXNA 15952
 #define NPC_FAERLINA 15953
 #define NPC_DEATH_KNIGHT 16803
 //areatrigger

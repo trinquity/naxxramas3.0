@@ -135,7 +135,7 @@ struct MANGOS_DLL_DECL mob_sporeAI : public ScriptedAI
 	void Aggro(Unit* who){}
 	void DamageTaken(Unit* done_by,uint32 &damage)
 	{
-		if(damage < m_creature->GetHealth())
+		if(damage > m_creature->GetHealth())
 			return;
 
 		DoCast(m_creature,SPELL_FUNGAL_CREEP,true);

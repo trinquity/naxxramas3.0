@@ -58,6 +58,9 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
 {
     boss_maexxnaAI(Creature* pCreature) : ScriptedAI(pCreature) 
 	{
+	SpellEntry *WebWrap = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_WEBTRAP);
+		if(WebWrap)
+			WebWrap->EffectApplyAuraName[0] = 0;
 	pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
     IsHeroicMode = pCreature->GetMap()->IsHeroic();
 	Reset();
@@ -86,8 +89,11 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
 		found = false;
 		if(pInstance)
 			pInstance->SetData(DATA_MAEXXNA_EVENT,NOT_STARTED);
+		if(pInstance->GetData(DATA_FAERLINA_EVENT) == DONE)
+		{
 		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_MAEX_OUTER_DOOR)))
-			pDoor->SetGoState(GO_STATE_READY);
+			pDoor->SetGoState(GO_STATE_ACTIVE);
+		}
 		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_MAEX_INNER_DOOR)))
 			pDoor->SetGoState(GO_STATE_ACTIVE);
 		for(int i = 0;i<NUM_OF_WRAP_POS;i++)
@@ -98,8 +104,6 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
 	{
 		if(pInstance)
 			pInstance->SetData(DATA_MAEXXNA_EVENT,IN_PROGRESS);
-		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_MAEX_OUTER_DOOR)))
-			pDoor->SetGoState(GO_STATE_READY);
 		if(GameObject* pDoor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARAC_MAEX_INNER_DOOR)))
 			pDoor->SetGoState(GO_STATE_ACTIVE);
 	}
@@ -126,7 +130,7 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
 		if(!found)
 			return;
 
-        Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1);
+        Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0);
 		if(!target)
 			return;
 		PlayersInWrap[pos] = target->GetGUID();
@@ -134,7 +138,7 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
 ,60000);
 		DoTeleportPlayer(target,WrapPos[pos].x,WrapPos[pos].y,WrapPos[pos].z,0);
 		target->CastSpell(target,SPELL_WEBTRAP,true);
-		SetPlr(Wrap,target->GetGUID());
+		Wrap->AddThreat(target,0.0f);
     }
 
     void UpdateAI(const uint32 diff)
@@ -195,42 +199,42 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
 
         DoMeleeAttackIfReady();
     }
-	void SetPlr(Creature*,uint64 );//below
 };
 struct MANGOS_DLL_DECL mob_webwrapAI : public Scripted_NoMovementAI
 {
-    mob_webwrapAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature){Reset();}
+    mob_webwrapAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
+	{
+		pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+		Reset();
+	}
+	ScriptedInstance* pInstance;
 	Unit* wrap;
 	Creature* maexxna;
 	void Reset()
     {
         wrap = NULL;
+		maexxna = (Creature*)Unit::GetUnit(*m_creature,pInstance->GetData64(NPC_MAEXXNA));
     }
-    void DamageTaken(Unit *done_by, uint32 &damage)
-    {
-        if (damage > m_creature->GetHealth())
-        {
-            if (wrap)
-            {
-
-                wrap->RemoveAurasDueToSpell(SPELL_WEBTRAP);
-				for(int i = 0;i<NUM_OF_WRAP_POS;i++)
-				{
-					if(((boss_maexxnaAI*)maexxna->AI())->PlayersInWrap[i] == wrap->GetGUID())
-					{
-						((boss_maexxnaAI*)maexxna->AI())->PlayersInWrap[i] = 0;
-					}
-				}
-            }
-        }
-    }
-    void UpdateAI(const uint32 diff) { }
+	void Aggro(Unit* who)
+	{
+		wrap = who;
+	}
+	void JustDied(Unit*)
+	{
+		if(!wrap)
+			return;
+		wrap->RemoveAurasDueToSpell(SPELL_WEBTRAP);
+		for(int i = 0;i<NUM_OF_WRAP_POS;i++)
+		{
+			if(((boss_maexxnaAI*)maexxna->AI())->PlayersInWrap[i] == wrap->GetGUID())
+			{
+				((boss_maexxnaAI*)maexxna->AI())->PlayersInWrap[i] = 0;
+			}
+		}
+		m_creature->RemoveCorpse();
+	}
+    void UpdateAI(const uint32 diff) {}
 };
-void boss_maexxnaAI::SetPlr(Creature* pWebwrap, uint64 value)
-{
-	((mob_webwrapAI*)pWebwrap->AI())->wrap = Unit::GetUnit(*m_creature,value);
-	((mob_webwrapAI*)pWebwrap->AI())->maexxna = m_creature;
-}
 CreatureAI* GetAI_mob_webwrap(Creature* pCreature)
 {
     return new mob_webwrapAI(pCreature);
