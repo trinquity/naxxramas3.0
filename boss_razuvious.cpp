@@ -129,6 +129,15 @@ struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
     {
         if (!m_creature->SelectHostilTarget() || !m_creature->getVictim())
             return;
+		/*if(m_creature->getVictim()->GetTypeId() != TYPEID_PLAYER && m_creature->getVictim()->GetEntry() == NPC_DEATH_KNIGHT)
+		{
+			if(!m_creature->getVictim()->isCharmed())
+			{
+				m_creature->getThreatManager().getThreatList().remove(m_creature->getThreatManager().getCurrentVictim());
+				m_creature->getVictim()->getThreatManager().getThreatList().remove(m_creature->getThreatManager().getOnlineContainer().getReferenceByTarget(m_creature));
+			}
+				
+		}*/
 
         //UnbalancingStrike_Timer
         if (UnbalancingStrike_Timer < diff)
@@ -145,7 +154,9 @@ struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
         }else DisruptingShout_Timer -= diff;
 		if (JaggedKnife_Timer < diff)
         {
-			DoCast(m_creature,SPELL_JAGGED_KNIFE);
+			Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0);
+			if(target)
+				DoCast(target,SPELL_JAGGED_KNIFE,true);
             JaggedKnife_Timer = 15000;
         }else JaggedKnife_Timer -= diff;
 

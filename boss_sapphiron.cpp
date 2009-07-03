@@ -36,6 +36,8 @@ EndScriptData */
 #define SPELL_BLIZZARD          28547
 #define SPELL_BESERK            26662
 
+#define GO_ICE_BLOCK 181247
+
 #define CENTER_X 3522.59
 #define CENTER_Y -5234.49
 #define CENTER_Z 137.62
@@ -67,6 +69,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
     uint32 phase;
     uint32 land_Timer;
 	Unit* IceBoltTargets[3];
+	GameObject* go;
     void Reset()
     {
         FrostBreath_Timer = 2500;
@@ -133,6 +136,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
 					{
 	                    DoCast(target,SPELL_ICEBOLT);
 						IceBoltTargets[Icebolt_Count] = target;
+						
 					}
 					if(Icebolt_Count == Icebolt_Max_Count-1)
 					{
@@ -158,7 +162,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
 							IceBoltTargets[i]->RemoveAurasDueToSpell(SPELL_ICEBOLT);
 					}
 					m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
-					m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_LEVITATING);
+					//m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_LEVITATING);
 					m_creature->GetMotionMaster()->MovementExpired();
                     m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
                     Fly_Timer = 45000;
@@ -181,7 +185,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
 		if(type != POINT_MOTION_TYPE && id != 0)
 			return;
 		 m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-		 m_creature->AddMonsterMoveFlag(MONSTER_MOVE_LEVITATING);
+		 //m_creature->AddMonsterMoveFlag(MONSTER_MOVE_LEVITATING);
 		 phase = 2;
 	}
 };

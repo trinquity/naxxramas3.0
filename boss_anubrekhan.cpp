@@ -136,7 +136,8 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
             {
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
                     DoCast(target, m_bIsHeroicMode ? SPELL_IMPALE_H : SPELL_IMPALE);
-            }
+            }else
+				Impale_Timer += 2000;
 
             Impale_Timer = 15000;
         }else Impale_Timer -= diff;

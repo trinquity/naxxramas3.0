@@ -27,7 +27,8 @@ EndScriptData */
 #define EMOTE_ZOMBIE                    -1533119
 
 #define SPELL_MORTALWOUND 25646
-#define SPELL_DECIMATE 54426
+#define SPELL_DECIMATE 28374
+#define SPELL_DECIMATE_HP 28375
 #define SPELL_ENRAGE 28371
 #define SPELL_ENRAGE_H 54427
 #define SPELL_BERSERK 26662
@@ -157,7 +158,7 @@ struct MANGOS_DLL_DECL mob_zombie_chowAI : public ScriptedAI
 	//workaround
 	void SpellHit(Unit* caster,const SpellEntry* spell)
 	{
-		if(spell->Id != SPELL_DECIMATE)
+		if(spell->Id != SPELL_DECIMATE_HP)
 			return;
 		gluth = caster;
 
