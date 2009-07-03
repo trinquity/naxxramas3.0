@@ -28,3 +28,4 @@ UPDATE `creature_template` SET ScriptName='mob_naxxramas_follower' WHERE entry=1
 UPDATE `creature_template` SET ScriptName='mob_naxxramas_worshipper' WHERE entry=16506;
 UPDATE `creature_template` SET ScriptName='mob_crypt_guard' WHERE entry=16573;
 UPDATE `creature_template` SET ScriptName='boss_rivendare_naxx' WHERE entry=30549;
+update instance_template set script = 'instance_naxxramas' where id = 533;
